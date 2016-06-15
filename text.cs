@@ -9,12 +9,12 @@ using Microsoft.Win32;
 using System.Threading;
 using System.IO;
 
-namespace text
+namespace text_file
 {
-    public partial class Form1 : Form
+    public partial class Form2 : Form
     {
         protected string strFileName;
-        
+
         protected string strProgName;
         protected ResourceManager resources;
         int filterIndex;
@@ -26,24 +26,26 @@ namespace text
         const string strFilterOpen =
             "Text Documents (*.txt)|*.txt|Web Pages (*.htm;*.html)|*.htm;*.html|Rich Text Format (*.rtf)|*.rtf|All Files (*.*)|*.*";
         const string strMruList = "MruList";
-        List<string> mruList = new List<string>();
+        public  RichTextBox rich2;
         
-        public Form1()
+        List<string> mruList = new List<string>();
+
+        public Form2()
         {
-            InitializeComponent();
+            
             strProgName = "Notepad Clone with File";
             MakeCaption();
-            
+
         }
-   
+
         protected string FileTitle()
         {
             return (strFileName != null && strFileName.Length > 1) ?
                 Path.GetFileName(strFileName) : "Untitled";
         }
         protected bool OkToTrash()
-        {   
-            if (!richTextBox1.Modified)
+        {
+            if (!rich2.Modified)
             {
                 return true;
             }
@@ -51,7 +53,7 @@ namespace text
             DialogResult dr = MessageBox.Show(string.Format("The_text_in_the_{0}_has_changed", FileTitle()) + ".\n\n" +
                     "Do_you_want_to_save_the_changes ?", strProgName,
                     MessageBoxButtons.YesNoCancel,
-                    MessageBoxIcon.Exclamation);          
+                    MessageBoxIcon.Exclamation);
             switch (dr)
             {
                 case DialogResult.Yes:
@@ -65,7 +67,7 @@ namespace text
             }
             return false;
         }
-        private void open_click()
+        public  void open_click()
         {
             if (!OkToTrash())
                 return;
@@ -90,9 +92,9 @@ namespace text
             if (!OkToTrash())
                 return;
 
-            richTextBox1.Clear();
-            richTextBox1.ClearUndo();
-            richTextBox1.Modified = false;
+            rich2.Clear();
+            rich2.ClearUndo();
+            rich2.Modified = false;
 
             strFileName = null;
             MakeCaption();
@@ -104,8 +106,8 @@ namespace text
             if (strFileName.EndsWith(".rtf"))
             {
                 try
-                {                 
-                    richTextBox1.LoadFile(strFileName, RichTextBoxStreamType.RichText);
+                {
+                    rich2.LoadFile(strFileName, RichTextBoxStreamType.RichText);
                 }
                 catch (Exception exc)
                 {
@@ -114,7 +116,7 @@ namespace text
                     MessageBox.Show(exc.Message, strProgName,
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error);
-                    
+
                     return;
                 }
             }
@@ -123,7 +125,7 @@ namespace text
                 StreamReader sr;
 
                 try
-                {                   
+                {
                     sr = new StreamReader(strFileName, System.Text.Encoding.Default, true);
                 }
                 catch (Exception exc)
@@ -135,7 +137,7 @@ namespace text
                         MessageBoxIcon.Asterisk);
                     return;
                 }
-                richTextBox1.Text = sr.ReadToEnd();
+                rich2.Text = sr.ReadToEnd();
                 sr.Close();
             }
 
@@ -144,10 +146,10 @@ namespace text
 
             MakeCaption();
 
-            richTextBox1.SelectionStart = 0;
-            richTextBox1.SelectionLength = 0;
-            richTextBox1.Modified = false;
-            richTextBox1.ClearUndo();
+            rich2.SelectionStart = 0;
+            rich2.SelectionLength = 0;
+            rich2.Modified = false;
+            rich2.ClearUndo();
             this.Cursor = Cursors.Default;
         }
         bool SaveFileDlg()
@@ -283,7 +285,7 @@ namespace text
             try
             {
                 StreamWriter sw = new StreamWriter(strFileName, false, System.Text.Encoding.Default);
-                
+
                 sw.NewLine = strNewLine;
 
                 //if (strNewLine == "\r\n")
@@ -292,7 +294,7 @@ namespace text
                 //}
                 //else
                 {
-                    sw.Write(richTextBox1.Text);
+                    sw.Write(rich2.Text);
                 }
                 sw.Close();
                 updateMRUList(strFileName);
@@ -305,7 +307,7 @@ namespace text
                     MessageBoxIcon.Asterisk);
                 return;
             }
-            richTextBox1.Modified = false;
+            rich2.Modified = false;
             this.Cursor = Cursors.Default;
         }
 
@@ -318,10 +320,34 @@ namespace text
         {
 
         }
-    }
-    class lse
-    {
 
+        private void InitializeComponent()
+        {
+            this.rich2 = new System.Windows.Forms.RichTextBox();
+            this.SuspendLayout();
+            // 
+            // rich2
+            // 
+            this.rich2.Location = new System.Drawing.Point(0, 0);
+            this.rich2.Name = "rich2";
+            this.rich2.Size = new System.Drawing.Size(100, 96);
+            this.rich2.TabIndex = 0;
+            this.rich2.Text = "";
+            // 
+            // Form2
+            // 
+            this.ClientSize = new System.Drawing.Size(284, 262);
+            this.Controls.Add(this.rich2);
+            this.Name = "Form2";
+            this.ResumeLayout(false);
+
+        }
     }
-   
+    class Class1
+    {
+        public static void ope(RichTextBox rtb)
+        {
+        }
+    }
+
 }
