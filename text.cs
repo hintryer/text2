@@ -9,9 +9,9 @@ using Microsoft.Win32;
 using System.Threading;
 using System.IO;
 
-namespace text_file
+namespace WindowsFormsApplication1
 {
-    public partial class Form2 : Form
+    public partial class Form2 : Form1
     {
         protected string strFileName;
 
@@ -25,17 +25,12 @@ namespace text_file
             "Text Documents (*.txt)|*.txt|Web Pages (*.htm;*.html)|*.htm;*.html|All Files (*.*)|*.*";
         const string strFilterOpen =
             "Text Documents (*.txt)|*.txt|Web Pages (*.htm;*.html)|*.htm;*.html|Rich Text Format (*.rtf)|*.rtf|All Files (*.*)|*.*";
-        const string strMruList = "MruList";
-        public  RichTextBox rich2;
-        
-        List<string> mruList = new List<string>();
 
         public Form2()
         {
-            
+
             strProgName = "Notepad Clone with File";
             MakeCaption();
-
         }
 
         protected string FileTitle()
@@ -45,7 +40,7 @@ namespace text_file
         }
         protected bool OkToTrash()
         {
-            if (!rich2.Modified)
+            if (!owntext.Modified)
             {
                 return true;
             }
@@ -67,7 +62,7 @@ namespace text_file
             }
             return false;
         }
-        public  void open_click()
+        public void open_click()
         {
             if (!OkToTrash())
                 return;
@@ -92,9 +87,9 @@ namespace text_file
             if (!OkToTrash())
                 return;
 
-            rich2.Clear();
-            rich2.ClearUndo();
-            rich2.Modified = false;
+            owntext.Clear();
+            owntext.ClearUndo();
+            owntext.Modified = false;
 
             strFileName = null;
             MakeCaption();
@@ -107,7 +102,7 @@ namespace text_file
             {
                 try
                 {
-                    rich2.LoadFile(strFileName, RichTextBoxStreamType.RichText);
+                    owntext.LoadFile(strFileName, RichTextBoxStreamType.RichText);
                 }
                 catch (Exception exc)
                 {
@@ -137,19 +132,18 @@ namespace text_file
                         MessageBoxIcon.Asterisk);
                     return;
                 }
-                rich2.Text = sr.ReadToEnd();
+                owntext.Text = sr.ReadToEnd();
                 sr.Close();
             }
 
             this.strFileName = strFileName;
-            updateMRUList(strFileName);
 
             MakeCaption();
 
-            rich2.SelectionStart = 0;
-            rich2.SelectionLength = 0;
-            rich2.Modified = false;
-            rich2.ClearUndo();
+            owntext.SelectionStart = 0;
+            owntext.SelectionLength = 0;
+            owntext.Modified = false;
+            owntext.ClearUndo();
             this.Cursor = Cursors.Default;
         }
         bool SaveFileDlg()
@@ -185,49 +179,6 @@ namespace text_file
         protected void MakeCaption()
         {
             Text = FileTitle() + " - " + strProgName;
-        }
-
-        private void updateMRUList(String fileName)
-        {
-            if (mruList.Contains(fileName))
-            {
-                mruList.Remove(fileName);
-            }
-
-            mruList.Insert(0, fileName);
-
-            if (mruList.Count > 10)
-            {
-                mruList.RemoveAt(10);
-            }
-
-            updateMRUMenu();
-        }
-        /// <summary>
-        /// Update MRU Submenu.
-        /// </summary>
-        private void updateMRUMenu()
-        {
-            //this.recentFilesToolStripMenuItem.DropDownItems.Clear();
-
-            //if (mruList.Count == 0)
-            //{
-            //    this.recentFilesToolStripMenuItem.DropDownItems.Add(resources.GetString("No_Recent_Files"));
-            //}
-            //else
-            //{
-            //    EventHandler eh = new EventHandler(MenuRecentFilesOnClick);
-
-            //    foreach (string fileName in mruList)
-            //    {
-            //        ToolStripItem item = this.recentFilesToolStripMenuItem.DropDownItems.Add(fileName);
-            //        item.Click += eh;
-            //    }
-            //    this.recentFilesToolStripMenuItem.DropDownItems.Add("-");
-            //    strClearRecentFiles = resources.GetString("Clear_Recent_Files");
-            //    ToolStripItem clearItem = this.recentFilesToolStripMenuItem.DropDownItems.Add(strClearRecentFiles);
-            ////    clearItem.Click += eh;
-            //}
         }
         private void save_Click()
         {
@@ -267,37 +218,14 @@ namespace text_file
 
         void SaveFile()
         {
-            //if (IsUnicode(richTextBox1.Text) )
-            //{
-            //    if (DialogResult.No == MessageBox.Show(
-            //        ("The_file_appears_to_contain_Unicode_characters") + ".\n" +
-            //        ("Saving_as_Windows_ANSI_will_result_in_loss_of_those_characters") + ".\n\n" +
-            //        ("Do_you_still_want_to_proceed") + "?\n" +
-            //        "\u2022 " + ("To_save_click_Yes") + ".\n" +
-            //        "\u2022 " + ("To_preserve_them_click_No_Then_save_file_in_a_Unicode_format") + ".",
-            //        ("Confirm_file_save"),
-            //        MessageBoxButtons.YesNo,
-            //        MessageBoxIcon.Warning))
-            //        return;
-            //}
-
             this.Cursor = Cursors.WaitCursor;
             try
             {
                 StreamWriter sw = new StreamWriter(strFileName, false, System.Text.Encoding.Default);
 
                 sw.NewLine = strNewLine;
-
-                //if (strNewLine == "\r\n")
-                //{
-                //    sw.Write(richTextBox1.Text.Replace("\n", "\r\n"));
-                //}
-                //else
-                {
-                    sw.Write(rich2.Text);
-                }
+                sw.Write(owntext.Text);
                 sw.Close();
-                updateMRUList(strFileName);
             }
             catch (Exception exc)
             {
@@ -307,47 +235,34 @@ namespace text_file
                     MessageBoxIcon.Asterisk);
                 return;
             }
-            rich2.Modified = false;
+            owntext.Modified = false;
             this.Cursor = Cursors.Default;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void 新建NToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new_click();
+        }
+
+        private void 打开OToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            open_click();
+        }
+
+        private void 保存SToolStripMenuItem_Click(object sender, EventArgs e)
         {
             save_Click();
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void 另存为AToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            saveAs_Click();
         }
 
-        private void InitializeComponent()
+        private void 退出XToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this.rich2 = new System.Windows.Forms.RichTextBox();
-            this.SuspendLayout();
-            // 
-            // rich2
-            // 
-            this.rich2.Location = new System.Drawing.Point(0, 0);
-            this.rich2.Name = "rich2";
-            this.rich2.Size = new System.Drawing.Size(100, 96);
-            this.rich2.TabIndex = 0;
-            this.rich2.Text = "";
-            // 
-            // Form2
-            // 
-            this.ClientSize = new System.Drawing.Size(284, 262);
-            this.Controls.Add(this.rich2);
-            this.Name = "Form2";
-            this.ResumeLayout(false);
-
+            exit_Click();
         }
+
     }
-    class Class1
-    {
-        public static void ope(RichTextBox rtb)
-        {
-        }
-    }
-
 }
