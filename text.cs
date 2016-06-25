@@ -9,7 +9,7 @@ using Microsoft.Win32;
 using System.Threading;
 using System.IO;
 
-namespace WindowsFormsApplication1
+namespace notepad_mod
 {
     public partial class Form2 : Form1
     {
@@ -28,7 +28,7 @@ namespace WindowsFormsApplication1
 
         public Form2()
         {
-
+            InitializeComponent();
             strProgName = "Notepad Clone with File";
             MakeCaption();
         }
@@ -45,8 +45,8 @@ namespace WindowsFormsApplication1
                 return true;
             }
 
-            DialogResult dr = MessageBox.Show(string.Format("The_text_in_the_{0}_has_changed", FileTitle()) + ".\n\n" +
-                    "Do_you_want_to_save_the_changes ?", strProgName,
+            DialogResult dr = MessageBox.Show(string.Format("{0}文件已经更改", FileTitle()) + ".\n\n" +
+                    "是否保存?", strProgName,
                     MessageBoxButtons.YesNoCancel,
                     MessageBoxIcon.Exclamation);
             switch (dr)
@@ -262,6 +262,11 @@ namespace WindowsFormsApplication1
         private void 退出XToolStripMenuItem_Click(object sender, EventArgs e)
         {
             exit_Click();
+        }
+
+        private void 打印预览VToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            print_Click();
         }
 
     }
